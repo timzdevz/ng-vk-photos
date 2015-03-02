@@ -23,9 +23,13 @@
       padding: @gutter / 2;
       float: left;
 
-      img {
-        cursor: pointer;
-        max-width: 100%;
+      .img-container {
+        height: 75px;
+
+        img {
+          cursor: pointer;
+          max-width: 100%;
+        }
       }
 
       &:nth-child(@{pics-per-row}n + 1) {
@@ -34,9 +38,15 @@
 
       .photo-meta {
         font-size: 12px;
+        padding-top: 5px;
       }
     }
   }
+}
+
+.status-message {
+  padding: 10px 0;
+  text-align: center;
 }
 
 button[disabled] {

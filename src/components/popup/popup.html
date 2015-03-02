@@ -2,10 +2,10 @@
   <div class="popup-wrapper" ng-click="close()"></div>
 
   <div class="popup-photo">
-    <div class="photo-item">
+    <div class="popup-photo-item">
       <img ng-src="{{ photo.sizes[photo.sizes.length-1].src }}" ng-click="nextPhoto()"/>
 
-      <div class="photo-meta">
+      <div class="popup-photo-meta">
         <div>Likes: {{ photo.likes.count }}</div>
         <div>Comments: {{ photo.comments.count }}</div>
         <div>Publish date: {{ photo.created * 1000 | date:'yyyy-MM-dd' }}</div>

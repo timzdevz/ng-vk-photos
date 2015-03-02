@@ -1,5 +1,7 @@
-module.exports = ($q) ->
-  VK.init {apiId: 4784531}
+module.exports = ($q, VK_API_KEY) ->
+  PHOTO_REQUEST_LIMIT = 1000
+
+  VK.init {apiId: VK_API_KEY}
   authed = false
 
   auth = ->
@@ -12,7 +14,6 @@ module.exports = ($q) ->
         if (response.session)
           deferred.resolve()
         else
-          console.log 'user rejected authentication'
           deferred.reject()
       )
     )
@@ -35,7 +36,7 @@ module.exports = ($q) ->
 
     deferred.promise
 
-  userExists = (userId)  ->
+  getUser = (userId)  ->
     deferred = $q.defer()
 
     VK.Api.call 'users.get',
@@ -43,22 +44,29 @@ module.exports = ($q) ->
         user_ids: userId,
       },
       (data) ->
-        exists = true
         if data.error && data.error['error_code'] == 113 or
             data.response && data.response[0].deactivated
-          exists = false;
+          ownerId = null;
+        else
+          ownerId = data.response[0].uid
 
-        deferred.resolve(exists)
+        deferred.resolve(ownerId)
 
     deferred.promise
 
-  getWallPhotos = (userId, offset = 0) ->
+  getWallPhotos = (userId, count, offset = 0) ->
     deferred = $q.defer()
 
-    VK.Api.call 'photos.getProfile',
+    if(count > PHOTO_REQUEST_LIMIT)
+      console.info 'Requests are limited to ' + PHOTO_REQUEST_LIMIT + 'photos!'
+      count = PHOTO_REQUEST_LIMIT
+
+    VK.Api.call 'photos.get',
       {
         owner_id: userId,
-        count: 50,
+        album_id: 'wall',
+        count: count,
+        rev: 1,
         extended: 1,
         photo_sizes: 1,
         offset: offset
@@ -70,6 +78,6 @@ module.exports = ($q) ->
 
   return {
     auth: auth
-    userExists: userExists
+    getUser: getUser
     getWallPhotos: getWallPhotos
   }

@@ -1,36 +1,10 @@
 <div class="container">
-  <form name="userIdForm" ng-submit="getPhotos()">
+  <form name="userIdForm" ng-submit="formSubmit()">
     <div>
-      User Id / nickname: <input type="text" ng-model="userId" name="userId" required/>
+      User Id / nickname: <input type="text" ng-model="userIdInput" name="userIdInput" required/>
       <button type="submit" ng-disabled="userIdForm.$invalid">Submit</button>
     </div>
   </form>
-
-  <div class="status-message" ng-show="statusMessage">
-    {{ statusMessage }}
-  </div>
-
-  <div class="photos-container" ng-if="userPhotos.length">
-    Sort by:
-    <select ng-model="sortBy" ng-change="sortPhotos(sortBy)">
-      <option value="-created">Publish date</option>
-      <option value="-likes.count">Likes</option>
-      <option value="-comments.count">Comments</option>
-    </select>
-
-    <div class="clearfix"></div>
-
-    <div class="photos-list" infinite-scroll="test()">
-      <div ng-repeat="photo in userPhotos" class="photo-item">
-        <img ng-src="{{ photo.sizes[0].src }}" ng-click="openPopup($index)"/>
-
-        <div class="photo-meta">
-          <div>Likes: {{ photo.likes.count }}</div>
-          <div>Comments: {{ photo.comments.count }}</div>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <div ui-view></div>
 </div>

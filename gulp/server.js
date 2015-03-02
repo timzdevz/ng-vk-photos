@@ -8,6 +8,7 @@ var util = require('util');
 
 var browserSync = require('browser-sync');
 
+var modRewrite  = require('connect-modrewrite');
 
 function browserSyncInit(baseDir, files, browser) {
   browser = browser === undefined ? 'default' : browser;
@@ -23,13 +24,18 @@ function browserSyncInit(baseDir, files, browser) {
     startPath: '/',
     server: {
       baseDir: baseDir,
-      routes: routes
+      routes: routes,
+      middleware: [
+          modRewrite([
+              '!\\.\\w+$ /index.html [L]'
+          ])
+      ]
     },
     browser: browser
   });
 }
 
-gulp.task('serve', ['watch'], function () {
+gulp.task('serve', ['build', 'watch'], function () {
   browserSyncInit([
     paths.dist
   ], [
@@ -37,6 +43,6 @@ gulp.task('serve', ['watch'], function () {
   ]);
 });
 
-gulp.task('serve:dist', ['build'], function () {
+gulp.task('serve:dist', ['build:dist'], function () {
   browserSyncInit(paths.dist);
 });

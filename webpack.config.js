@@ -4,7 +4,6 @@ var webpack = require('webpack');
 
 module.exports  = {
   debug: true,
-  watch: false,
 
   entry: './src/app/index.coffee',
   output: {

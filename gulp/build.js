@@ -4,11 +4,15 @@ var gulp = require('gulp');
 
 var paths = gulp.paths;
 
+var webpack = require('webpack');
+
+var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
+
 var $ = require('gulp-load-plugins')({
   pattern: ['gulp-*', 'main-bower-files', 'del']
 });
 
-var webpackConfig = require('../webpack.config')
+var webpackConfig = require('../webpack.config');
 
 gulp.task('images', function () {
   return gulp.src(paths.src + '/assets/images/**/*')
@@ -18,10 +22,9 @@ gulp.task('images', function () {
 gulp.task("vendor", function() {
   return gulp.src($.mainBowerFiles())
     .pipe($.filter('**/*.js'))
-    .pipe($.debug())
     .pipe($.concat('vendor.js'))
     .pipe($.ngAnnotate())
-    //.pipe($.uglify())
+    .pipe($.uglify())
     .pipe($.size())
     .pipe(gulp.dest(paths.dist + '/'));
 });
@@ -32,8 +35,21 @@ gulp.task('webpack', function() {
     .pipe(gulp.dest(paths.dist + '/'))
 });
 
+gulp.task('webpack:dist', function() {
+  var distConfig = Object.create(webpackConfig);
+  distConfig.debug = false;
+  distConfig.plugins = distConfig.plugins.concat(
+    new ngAnnotatePlugin(),
+    new webpack.optimize.UglifyJsPlugin());
+
+  return gulp.src(paths.src + '/app/index.js')
+    .pipe($.webpack(distConfig))
+    .pipe(gulp.dest(paths.dist + '/'))
+});
+
 gulp.task('copyIndex', function() {
   return gulp.src(paths.src +  '/index.html')
+    .pipe($.minifyHtml())
     .pipe(gulp.dest(paths.dist + '/'));
 });
 
@@ -47,3 +63,4 @@ gulp.task('clean', function (done) {
 });
 
 gulp.task('build', ['webpack', 'vendor', 'copyIndex', 'images']);
+gulp.task('build:dist', ['webpack:dist', 'vendor', 'copyIndex', 'images']);

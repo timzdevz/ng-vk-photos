@@ -1,0 +1,30 @@
+<div class="status-message">{{ statusMessage }}</div>
+
+<div class="photos-container" ng-if="userPhotos.length">
+  Sort by:
+  <select ng-model="sortBy" ng-change="sortPhotos(sortBy)">
+    <option value="-created">Publish date</option>
+    <option value="-likes.count">Likes</option>
+    <option value="-comments.count">Comments</option>
+  </select>
+
+  <div class="clearfix"></div>
+
+  <div class="photos-list" infinite-scroll="getNextPhotos()"
+       infinite-scroll-disabled="loadingNext || loadedAll || popupOpened">
+    <div ng-repeat="photo in userPhotos" class="photo-item">
+      <div class="img-container">
+        <img ng-src="{{ photo.sizes[0].src }}"
+             ng-click="openPopup(photo.pid, $index)"/>
+      </div>
+
+      <div class="photo-meta">
+        <div>Likes: {{ photo.likes.count }}</div>
+        <div>Comments: {{ photo.comments.count }}</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div ng-show="loadingNext" class="status-message">Loading data...</div>

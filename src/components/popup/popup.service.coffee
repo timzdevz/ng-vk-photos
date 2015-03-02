@@ -1,8 +1,6 @@
 module.exports = ($compile) ->
-  elemCompile = $compile(angular.element('<popup></popup>'))
-
   {
-    open: ($scope) ->
-      elemCompile($scope)
+    open: (scope, photoIndex) ->
+      $compile(angular.element('<popup photo-index="' + photoIndex + '"></popup>'))(scope)
       return
   }
